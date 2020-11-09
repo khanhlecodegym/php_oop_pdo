@@ -75,6 +75,7 @@
             <h1 class="text-center font-weight-bold text-primary">Create Account</h1>
             <hr class="my-3">
             <form action="#" method="post" class="px-3" id="register-form">
+              <h3 id="messageAlert"></h3>
               <div class="input-group input-group-lg form-group">
                 <div class="input-group-prepend">
                   <span class="input-group-text">
@@ -97,7 +98,7 @@
                     <i class="fas fa-key fa-lg"></i>
                   </span>
                 </div>
-                <input type="password" name="cpassword" id="crpassword" class="form-control rounded-0" placeholder="Input Password" required minlength="6">
+                <input type="password" name="cpassword" id="rpassword" class="form-control rounded-0" placeholder="Input Password" required minlength="6">
               </div>
               <div class="input-group input-group-lg form-group">
                 <div class="input-group-prepend">
@@ -105,7 +106,10 @@
                     <i class="fas fa-key fa-lg"></i>
                   </span>
                 </div>
-                <input type="password" name="password" id="rpassword" class="form-control rounded-0" placeholder="Confirm Password" required minlength="6">
+                <input type="password" name="password" id="cpassword" class="form-control rounded-0" placeholder="Confirm Password" required minlength="6">
+              </div>
+              <div class="form-group">
+                <div id="passError" class="text-danger font-weight-bold"></div>
               </div>
               <div class="form-group">
                 <input type="submit" value="Register" id="register-btn" class="btn btn-primary btn-lg btn-block myBtn">
@@ -175,6 +179,34 @@
         $('#forgot-box').hide();
         $('#login-box').show();
       });
+
+      // Register User Ajax
+      $('#register-btn').click((e) => {
+        if($('#register-form')[0].checkValidity()) {
+          e.preventDefault();
+          $('#register-btn').val('Please Wait ...');
+          if($('#rpassword').val() != $('#cpassword').val()) {
+            $('#passError').text('Password did not matched!');
+            $('#register-btn').val('Register');
+          } else {
+            $('#passError').text('');
+            $.ajax({
+              url: 'src/UserAction.php',
+              method: 'post',
+              data: $("#register-form").serialize()+'&action=register',
+              success:function(response) {
+                $('#register-btn').val('Register');
+                if(response === 'register') {
+                  window.location = 'home.php';
+                } else {
+                  $('#messageAlert').html(response);
+                }
+              }
+            });
+          }
+        }
+      });
+
     });
   </script>
 </body>
